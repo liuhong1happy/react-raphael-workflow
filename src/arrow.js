@@ -16,7 +16,7 @@ class Arrow extends React.Component {
 	render(){
 		var {x1,y1,x2,y2} = this.props;
 		var pathString = this.getArrowPath(x1,y1,x2,y2,10);
-		return (<Path d={pathString} ></Path>)
+		return (<Path d={pathString} />)
 	}
 }
 				
