@@ -4,7 +4,7 @@ so easy! create workflow with react-raphael.
 
 ## Snapshot
 
-![Snapshot](snapshot.svg)
+![Snapshot](https://github.com/liuhong1happy/react-raphael-workflow/blob/master/snapshot.svg)
 
 ## Contact
 
