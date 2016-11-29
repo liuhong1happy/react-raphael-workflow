@@ -18,9 +18,9 @@ const NodeTable = {
 	"start-node": SimpleNode,
 	"end-node": SimpleNode,
     "simple-node": SimpleNode,
-//	"merge-node": MergeNode,
-//	"branch-node": BranchNode,
-//	"sync-node": SyncNode
+	"merge-node": SimpleNode,
+	"branch-node": SimpleNode,
+	"sync-node": SimpleNode
 }
 
 class Node extends React.Component {
@@ -136,6 +136,29 @@ class WorkFlow extends React.Component {
 					this.updateNodeAndArrow(node,nextArrow,nextNode);
                     this.updateNodeAndArrow(lastNode,lastArrow,node);
                     break;
+				case "branch-node":
+                    var nextArrows = this.getNextArrowsByNodeId(id) || [];
+                    var lastArrow = this.getLastArrowsByNodeId(id)[0] || {};
+                    var lastNode = this.getNodeById(lastArrow.last);
+					for(var i=0; i<nextArrows.length; i++){
+						var nextNode = this.getNodeById(nextArrows[i].next);
+						this.updateNodeAndArrow(node,nextArrows[i],nextNode);
+					}
+                    this.updateNodeAndArrow(lastNode,lastArrow,node);
+					break;
+				case "sync-node":
+				case "merge-node":
+                    var nextArrow = this.getNextArrowsByNodeId(id)[0] || {};
+                    var nextNode = this.getNodeById(nextArrow.next);
+                    var lastArrows = this.getLastArrowsByNodeId(id) || [];
+					for(var i=0; i<lastArrows.length; i++){
+						var lastNode = this.getNodeById(lastArrows[i].last);
+						this.updateNodeAndArrow(lastNode,lastArrows[i],node);
+					}
+                    this.updateNodeAndArrow(node,nextArrow,nextNode);
+					break;
+				default:
+					break;
             }
         }
 		if(key=="selectId"){
@@ -143,14 +166,6 @@ class WorkFlow extends React.Component {
 				selectId: value,
 				update: "node"
 			})
-			// test
-			var insertSimpleNode = this.insertSimpleNode.bind(this);
-			if(node.type!="start-node"){
-				return;
-			}
-			setTimeout(function(){
-				insertSimpleNode();
-			},100)
 		}
 	}
 	insertSimpleNode(){
@@ -286,16 +301,25 @@ WorkFlow.propTypes = {
 	arrows: React.PropTypes.array,
 	nodes: React.PropTypes.array
 };
-					
+
 WorkFlow.defaultProps = { 
 	width: 600, 
 	height: 400, 
 	arrows: [
-		{ id:"default-arrow", last: "start", next: "end", x1: 70, y1: 60, x2: 70, y2: 320 }
+		{ id:"default-arrow-1", last: "start", next: "branch-node", x1: 300, y1: 60, x2: 300, y2: 100 },
+		{ id:"default-arrow-2", last: "branch-node", next: "simple-node-1", x1: 300, y1: 140, x2: 200, y2: 180 },
+		{ id:"default-arrow-3", last: "branch-node", next: "simple-node-2", x1: 300, y1: 140, x2: 400, y2: 180 },
+		{ id:"default-arrow-4", last: "simple-node-1", next: "sync-node", x1: 200, y1: 220, x2: 300, y2: 260 },
+		{ id:"default-arrow-5", last: "simple-node-2", next: "sync-node", x1: 400, y1: 220, x2: 300, y2: 260 },
+		{ id:"default-arrow-6", last: "sync-node", next: "end", x1: 300, y1: 300, x2: 300, y2: 340 }
 	],
 	nodes: [
-		{ type: "start-node", position: { x: 20,y: 20 }, width: 100, height: 40, r: 20, text: "Start" ,id: "start"},
-		{ type: "end-node", position: { x: 20,y: 320 }, width: 100, height: 40, r: 20, text: "End", id: "end" }
+		{ type: "start-node", position: { x: 250,y: 20 }, width: 100, height: 40, r: 20, text: "Start" ,id: "start"},
+		{ type: "branch-node", position: { x: 250,y: 100 }, width: 100, height: 40, r: 20, text: "Branch Node" ,id: "branch-node"},
+		{ type: "simple-node", position: { x: 150,y: 180 }, width: 100, height: 40, r: 20, text: "Simple Node" ,id: "simple-node-1"},
+		{ type: "simple-node", position: { x: 350,y: 180 }, width: 100, height: 40, r: 20, text: "Simple Node" ,id: "simple-node-2"},
+		{ type: "sync-node", position: { x: 250,y: 260 }, width: 100, height: 40, r: 20, text: "Sync Node", id: "sync-node" },
+		{ type: "end-node", position: { x: 250,y: 340 }, width: 100, height: 40, r: 20, text: "End", id: "end" }
 	]
 };
 							  

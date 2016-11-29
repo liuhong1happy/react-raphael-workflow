@@ -40,7 +40,10 @@ module.exports = {
     },{
         test: /\.less$/,
         loaders: ['style','css','less']
-    }
+    },{
+		test: /\.(png|jpg|gif)$/,
+		loader: 'url-loader?limit=10000&name=build/[name].[ext]'
+	}
     ]
   }
 };
